@@ -78,9 +78,12 @@ const StartGameScreen = props => {
                                 onPress={confirmInputHandler}
                                 color={Colors.accent} /></View>
                 </View>
+                
             </Card>
+            
             {confirmedOutput}    
         </View>
+       
         </TouchableWithoutFeedback>
     );
 };
