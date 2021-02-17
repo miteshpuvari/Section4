@@ -15,7 +15,8 @@ const styles = StyleSheet.create({
         elevation: 10,
         backgroundColor: 'white',
         padding: 20,
+        margin: 1,
     }
 });
 
-export default Card;
+export default Card; 
