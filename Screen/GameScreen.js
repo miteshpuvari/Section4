@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import NumberContainer from '../Components/NumberContainer';
 import Card from '../Components/Card';
+import MainButton from '../Components/MianButton';
 
 const generateRandomeBetween = (min, max, exclude) => {
     min = Math.ceil(min);
@@ -56,8 +57,8 @@ const GameScreen = props => {
             <Text>Computer guess</Text>
             <NumberContainer> {currentGuess} </NumberContainer>
             <Card style={styles.buttonContainer}>
-                <Button title="LOWER" onPress={nextGuessHandelar.bind(this, 'lower') } />
-                <Button title="GRETER" onPress={nextGuessHandelar.bind(this, 'greater')} />
+                <MainButton onPress={nextGuessHandelar.bind(this, 'lower') }> LOWER </MainButton>
+                <MainButton  onPress={nextGuessHandelar.bind(this, 'greater')} > GRETER </MainButton>
             </Card>
         </View>
     )
@@ -73,8 +74,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         marginTop: 20,
-        width: 300,
-        maxWidth: '80%'
+        width: 350,
+        maxWidth: '90%'
     }
 });
 
