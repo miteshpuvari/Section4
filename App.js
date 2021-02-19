@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useState} from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import {StyleSheet, View } from 'react-native';
 
 import Header from './Components/Header';
 import StartGameScreen from './Screen/StartGameScreen'; 

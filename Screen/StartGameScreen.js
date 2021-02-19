@@ -5,7 +5,10 @@ import { View,
          Button, 
          TouchableWithoutFeedback,
          Keyboard,
-        Alert} from 'react-native';
+        Alert,
+        Dimensions,
+        ScrollView,
+        KeyboardAvoidingView} from 'react-native';
 
 import Card from '../Components/Card';
 import NumberContainer from '../Components/NumberContainer';
@@ -51,6 +54,8 @@ const StartGameScreen = props => {
     }
 
     return (
+        <ScrollView>
+            <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={30} >
         <TouchableWithoutFeedback 
         onPress={() => {
             Keyboard.dismiss();
@@ -86,6 +91,8 @@ const StartGameScreen = props => {
         </View>
        
         </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+        </ScrollView>
     );
 };
 
@@ -101,8 +108,9 @@ const styles = StyleSheet.create({
             marginVertical: 10,
     },
     inpotContainer: {
-        width: 300,
-        maxWidth: '80%',
+        width: '80%',
+        maxWidth: '95%',
+        minWidth: 300,
         alignItems: 'center',
         
     },
@@ -114,11 +122,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15
     },
     button1: {
-        width: 100, 
+        //width: 100, 
+        width: Dimensions.get('window').width / 4
     },
     button2: {
-        width: 100,
-    },
+         //width: 100,
+         width: Dimensions.get('window').width / 4
+     },
     input: {
         width: 150,
         textAlign: 'center'

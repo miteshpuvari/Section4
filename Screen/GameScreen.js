@@ -1,5 +1,11 @@
 import React, {useRef, useEffect} from 'react';
-import {Text, View, StyleSheet, Button, Alert} from 'react-native';
+import {Text, 
+        View, 
+        StyleSheet, 
+        Alert, 
+        ScrollView, 
+        FlatList,
+        Dimensions} from 'react-native';
 import { useState } from 'react';
 
 import NumberContainer from '../Components/NumberContainer';
@@ -19,10 +25,17 @@ const generateRandomeBetween = (min, max, exclude) => {
     }
 };
 
-const GameScreen = props => {
-    const [currentGuess, setCurrentGuess] = useState(generateRandomeBetween(1, 100, props.userChoice));
+const renderListItem = (listLenghth, itemData) => (
+                        <View style={styles.listItem}>
+                            <Text>#{listLenghth - itemData.index} </Text>
+                            <Text> {itemData.item} </Text>
+                        </View>);
 
-    const [round, setRounds] = useState(0);
+const GameScreen = props => {
+    const initialGuess = generateRandomeBetween(1, 100, props.userChoice);
+    const [currentGuess, setCurrentGuess] = useState( initialGuess );
+
+    const [pastGuesses, setPastGuesses] = useState([initialGuess.toString()]);
     const currentLow = useRef(1);
     const currentHigh = useRef(100);
 
@@ -30,7 +43,7 @@ const GameScreen = props => {
 
     useEffect(() => {
         if(currentGuess === userChoice) {
-            onGameOver(round)
+            onGameOver(pastGuesses.length)
         }
     }, [currentGuess, userChoice, onGameOver]);     
     
@@ -43,23 +56,40 @@ const GameScreen = props => {
         if (direction === 'lower') {
             currentHigh.current = currentGuess;
         } else {
-            currentLow.current = currentGuess;
+            currentLow.current = currentGuess + 1;
         }
         
         const nextNumber = generateRandomeBetween(currentLow.current, currentHigh.current, currentGuess);
         setCurrentGuess(nextNumber);
-        setRounds(curRounds => curRounds +1);        
+        // setRounds(curRounds => curRounds +1);        
+        setPastGuesses(curPastGuesses => [nextNumber.toString(), ...curPastGuesses]);
 
     };
+
+    let listContainerStyle = styles.listContainer;
+
+    if(Dimensions.get('window').width < 350) {
+        listContainerStyle = styles.listContainerBig;
+    }
 
     return (
         <View style={styles.screen}>
             <Text>Computer guess</Text>
             <NumberContainer> {currentGuess} </NumberContainer>
             <Card style={styles.buttonContainer}>
-                <MainButton onPress={nextGuessHandelar.bind(this, 'lower') }> LOWER </MainButton>
+                <MainButton style={styles.lower_btn} onPress={nextGuessHandelar.bind(this, 'lower') }> LOWER </MainButton>
                 <MainButton  onPress={nextGuessHandelar.bind(this, 'greater')} > GRETER </MainButton>
             </Card>
+            <View style={listContainerStyle}>
+            {/* <ScrollView contentContainerStyle={styles.list} >
+                {pastGuesses.map((guess, index) => renderListItem(guess, pastGuesses.length - index))}
+            </ScrollView> */}
+            <FlatList contentContainerStyle={styles.list} 
+                      keyExtractor={(item) => item} 
+                      data={pastGuesses} 
+                      renderItem={renderListItem.bind(this, pastGuesses.length)} 
+                       />
+            </View>
         </View>
     )
 };
@@ -72,10 +102,35 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginTop: 20,
-        width: 350,
-        maxWidth: '90%'
+        width: '100%',
+        justifyContent: 'space-between',
+        paddingHorizontal: 15,
+        marginTop: Dimensions.get('window').height > 600 ? 20 : 1,
+        //width: 350,
+       // maxWidth: '90%'
+    },
+    listContainer: {
+        flex: 1,
+        width: '60%'
+    },
+    listContainerBig: {
+        flex: 1,
+        width: '80%'
+    },
+    list: {
+        flexGrow: 1, // flex grow is more falxibale and it's a scrolable
+        // alignItems: 'center', 
+        justifyContent: 'flex-end'
+    },
+    listItem: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        padding: 15,
+        marginVertical: 10,
+        backgroundColor: 'white',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%'
     }
 });
 

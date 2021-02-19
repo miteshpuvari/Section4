@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, Button, Image} from 'react-native';
+import {View, Text, Button, Image, Dimensions, ScrollView} from 'react-native';
 import {StyleSheet} from 'react-native';
 
 import Colors from '../Constants/Colors';
@@ -23,6 +23,7 @@ const GameOverScreen = props => {
                                 <Text style={style.highlight} >{props.userNumber}</Text> </Text>
         <MainButton title="NEW GAME" onPress={props.onRestart}>NEW GAME</MainButton>
     </View>
+    
 };
 
 const style = StyleSheet.create({
@@ -32,13 +33,14 @@ const style = StyleSheet.create({
          alignItems: 'center',
      },
      imageContainer: {
-        width: 300,
-        height: 300,
-        borderRadius: 150,  // the border radios is half of the height and width than perfact circale is drow
+        width: Dimensions.get('window').width * 0.7,
+        height: Dimensions.get('window').width * 0.7,  // height and with is both same so that we use width deminsion
+        borderRadius: Dimensions.get('window').width * 0.7 / 2,  // the border radios is half of the height and width than perfact circale is drow
         borderWidth: 4,
         borderBottomColor: 'black',
         alignItems: 'center',
-        overflow: 'hidden' // when the image is uot off the container than is cut off and set in perfact size
+        overflow: 'hidden', // when the image is uot off the container than is cut off and set in perfact size
+        marginVertical: Dimensions.get('window').height / 40
      },
      image: {
          width: '100%',
@@ -49,7 +51,8 @@ const style = StyleSheet.create({
      },
      highlight: {
          color: Colors.primary,
-     }
+     },
+     
 
 });
 
