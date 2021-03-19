@@ -3,13 +3,14 @@ import {View, Text, Button, Image, Dimensions, ScrollView} from 'react-native';
 import {StyleSheet} from 'react-native';
 
 import Colors from '../Constants/Colors';
-import MainButton from '../Components/MianButton';
+import MainButton from '../Components/MainButton.android';
 
 const GameOverScreen = props => {
-    return <View style={style.screen}>
-        <Text>The Game is Over!!</Text>
+    return<View style={style.screen}>
+        <ScrollView> 
+        <Text style={style.text} >The Game is Over!!</Text>
         <View style={style.imageContainer} >
-        <Image 
+        <Image style={style.img_cntr}
         
         // source={require('../assets/tree.png')}
         
@@ -22,7 +23,9 @@ const GameOverScreen = props => {
         <Text>Your phone needed  <Text style={style.highlight} >{props.roundsNumber}</Text> rounds to guess the number 
                                 <Text style={style.highlight} >{props.userNumber}</Text> </Text>
         <MainButton title="NEW GAME" onPress={props.onRestart}>NEW GAME</MainButton>
+        </ScrollView>
     </View>
+    
     
 };
 
@@ -31,6 +34,7 @@ const style = StyleSheet.create({
          flex: 1,
          justifyContent: 'center',
          alignItems: 'center',
+         paddingVertical: 10
      },
      imageContainer: {
         width: Dimensions.get('window').width * 0.7,
@@ -42,12 +46,19 @@ const style = StyleSheet.create({
         overflow: 'hidden', // when the image is uot off the container than is cut off and set in perfact size
         marginVertical: Dimensions.get('window').height / 40
      },
+     text: {
+        textAlign: 'center'
+     },
      image: {
          width: '100%',
          height: '100%',
-         borderRadius: 200,
          alignContent: 'center',
-         alignItems: 'center'
+         borderRadius: 200,
+         alignSelf: 'center'
+
+     },
+     img_cntr: {
+        alignItems: 'center'
      },
      highlight: {
          color: Colors.primary,

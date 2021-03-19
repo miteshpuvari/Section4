@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View,
          StyleSheet, 
          Text, 
@@ -14,12 +14,19 @@ import Card from '../Components/Card';
 import NumberContainer from '../Components/NumberContainer';
 import Input from '../Components/Input';
 import Colors from '../Constants/Colors';
-import MainButton from '../Components/MianButton';
+import MainButton from '../Components/MainButton.android';
 
 const StartGameScreen = props => {
     const [enterdValue, setEnterdValue] = useState('');
     const [confirmed, setConfirmed] = useState(false);
     const [selectedNumber, setSelectedNumber] = useState();  
+    const [buttonWidth, setButtonWidth] = useState(Dimensions.get('window').width / 4);
+
+    const updateLayout = () => {
+        setButtonWidth(Dimensions.get('window').width / 4);
+    };
+    Dimensions.addEventListener('change', updateLayout);
+
     const numberInputhendelar = inputText => {
         setEnterdValue(inputText.replace(/[^0-9]/g, ''));  // replace the value 0 - 9 with space using that you can not insert any string or , . etc.
     };
@@ -28,6 +35,17 @@ const StartGameScreen = props => {
         setEnterdValue('');
         setConfirmed(false);
     };
+
+    useEffect(() => {
+        const updateLayout = () => {
+            setButtonWidth(Dimensions.get('window').width / 4);
+        };
+        Dimensions.addEventListener('change', updateLayout);
+        return () => {
+            Dimensions.removeEventListener('change', updateLayout);
+        };
+    });
+
     const confirmInputHandler = () => {
         const chosenNumber = parseInt(enterdValue);
         if (isNaN(chosenNumber) || chosenNumber <=0 || chosenNumber > 99)
@@ -57,6 +75,7 @@ const StartGameScreen = props => {
         <ScrollView>
             <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={30} >
         <TouchableWithoutFeedback 
+
         onPress={() => {
             Keyboard.dismiss();
         }}>
@@ -74,12 +93,12 @@ const StartGameScreen = props => {
                  onChangeText={numberInputhendelar}
                  value={enterdValue} />
                 <View style={styles.buttonContainer}>
-                    <View style={styles.button1}>
+                    <View style={{width: buttonWidth}}>
                         <Button title="Reset" 
                                 onPress={resetInputHandler} 
                                 color={Colors.primary}/>
                     </View>
-                    <View style={styles.button2}>
+                    <View style={{width: buttonWidth}}>
                         <Button title="Confirm"
                                 onPress={confirmInputHandler}
                                 color={Colors.accent} /></View>
@@ -121,14 +140,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 15
     },
-    button1: {
-        //width: 100, 
-        width: Dimensions.get('window').width / 4
-    },
-    button2: {
-         //width: 100,
-         width: Dimensions.get('window').width / 4
-     },
+    // button1: {
+    //     //width: 100, 
+    //     width: Dimensions.get('window').width / 4  // this is only calculated wehen your app starts
+    // },
+    // button2: {
+    //      //width: 100,
+    //      width: Dimensions.get('window').width / 4  // this is only calculated wehen your app starts
+    //  },
     input: {
         width: 150,
         textAlign: 'center'

@@ -5,12 +5,14 @@ import {Text,
         Alert, 
         ScrollView, 
         FlatList,
-        Dimensions} from 'react-native';
+        Dimensions,
+        SafeAreaView} from 'react-native';
+import { ScreenOrientation } from 'expo';
 import { useState } from 'react';
 
 import NumberContainer from '../Components/NumberContainer';
 import Card from '../Components/Card';
-import MainButton from '../Components/MianButton';
+import MainButton from '../Components/MainButton.android';  
 
 const generateRandomeBetween = (min, max, exclude) => {
     min = Math.ceil(min);
@@ -32,16 +34,38 @@ const renderListItem = (listLenghth, itemData) => (
                         </View>);
 
 const GameScreen = props => {
+    
+    // ScreenOrientation.lockAsync(ScreenOrientation.OriantationLock.PORTRAIT);
+
     const initialGuess = generateRandomeBetween(1, 100, props.userChoice);
     const [currentGuess, setCurrentGuess] = useState( initialGuess );
-
     const [pastGuesses, setPastGuesses] = useState([initialGuess.toString()]);
+
+    // using that automaticaly manage the widh
+    const [availableDeviceWidth, setAvailableDeviceWidth] = useState(Dimensions.get('window').width);
+    
+    // using that automatically manage the height
+    const [availableDeviceHeight, setAcailableDeviceHeight] = useState(Dimensions.get('window').height);
+    
     const currentLow = useRef(1);
     const currentHigh = useRef(100);
-
     const {userChoice, onGameOver} = props;
 
     useEffect(() => {
+        let isMounted = true; // note this flag denoted mount status
+        const updateLayout = () => {
+            setAvailableDeviceWidth(Dimensions.get('window').width);
+            setAcailableDeviceHeight(Dimensions.get('window').height);
+        };
+        Dimensions.addEventListener('change', updateLayout)
+
+        return () => {
+            Dimensions.removeEventListener('change', updateLayout);
+        };
+    });
+
+    useEffect(() => {
+        let isMounted = true; // note this flag denoted mount status   warning : can't perform a react state update on an unmounted compone solved 
         if(currentGuess === userChoice) {
             onGameOver(pastGuesses.length)
         }
@@ -68,11 +92,35 @@ const GameScreen = props => {
 
     let listContainerStyle = styles.listContainer;
 
-    if(Dimensions.get('window').width < 350) {
+    if(availableDeviceWidth < 350) {
         listContainerStyle = styles.listContainerBig;
     }
 
+    if(availableDeviceHeight < 500) {
+        return (
+            <View style={styles.screen}>
+                <Text>Computer guess</Text>
+            <View style={styles.controls} >
+                <MainButton style={styles.lower_btn} onPress={nextGuessHandelar.bind(this, 'lower') }> LOWER </MainButton>
+                <NumberContainer> {currentGuess} </NumberContainer>
+                <MainButton  onPress={nextGuessHandelar.bind(this, 'greater')} > GRETER </MainButton>
+            </View>
+            <View style={listContainerStyle}>
+            {/* <ScrollView contentContainerStyle={styles.list} >
+                {pastGuesses.map((guess, index) => renderListItem(guess, pastGuesses.length - index))}
+            </ScrollView> */}
+            <FlatList contentContainerStyle={styles.list} 
+                      keyExtractor={(item) => item} 
+                      data={pastGuesses} 
+                      renderItem={renderListItem.bind(this, pastGuesses.length)} 
+                       />
+            </View>
+        </View>
+        );
+    }
+
     return (
+        
         <View style={styles.screen}>
             <Text>Computer guess</Text>
             <NumberContainer> {currentGuess} </NumberContainer>
@@ -91,6 +139,7 @@ const GameScreen = props => {
                        />
             </View>
         </View>
+        
     )
 };
 
@@ -108,6 +157,12 @@ const styles = StyleSheet.create({
         marginTop: Dimensions.get('window').height > 600 ? 20 : 1,
         //width: 350,
        // maxWidth: '90%'
+    },
+    controls: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        width: '80%'
     },
     listContainer: {
         flex: 1,
